@@ -4,45 +4,56 @@ from datetime import UTC, datetime, timedelta
 import boto3
 
 
-MAX_PAGES = 5
+TARGET_EVENT_COUNT = 100
 PAGE_SIZE = 50
 
+IGNORED_EVENT_TYPES = {
+    ("cloudtrail.amazonaws.com", "LookupEvents"),
+    ("dynamodb.amazonaws.com", "DescribeStream"),
+}
 
-def fetch_events(days: int = 15) -> list[dict]:
-    cloudtrail_client = boto3.client("cloudtrail")
-    paginator = cloudtrail_client.get_paginator("lookup_events")
+
+def fetch_events(days: int = 15) -> tuple[list[dict], int, int]:
+    client = boto3.client("cloudtrail")
     start_time = datetime.now(UTC) - timedelta(days=days)
+    paginator = client.get_paginator("lookup_events")
 
     events = []
+    ignored_events = 0
+    pages_scanned = 0
 
-    for page_number, page in enumerate(
-        paginator.paginate(
-            StartTime=start_time,
-            PaginationConfig={"PageSize": PAGE_SIZE},
-        ),
-        start=1,
+    for page in paginator.paginate(
+        StartTime=start_time,
+        PaginationConfig={"PageSize": PAGE_SIZE},
     ):
+        pages_scanned += 1
+
         for event in page["Events"]:
-            if (
-                event["EventSource"] == "cloudtrail.amazonaws.com"
-                and event["EventName"] == "LookupEvents"
-            ):
+            event_type = (
+                event["EventSource"],
+                event["EventName"],
+            )
+
+            if event_type in IGNORED_EVENT_TYPES:
+                ignored_events += 1
                 continue
 
             events.append(event)
 
-        if page_number >= MAX_PAGES:
-            break
+            if len(events) >= TARGET_EVENT_COUNT:
+                return events, ignored_events, pages_scanned
 
-    return events
+    return events, ignored_events, pages_scanned
 
 
 def summarize_events(events: list[dict]) -> Counter:
     counts = Counter()
 
     for event in events:
+        username = event.get("Username", "Unknown")
+
         key = (
-            event["Username"] if "Username" in event else "Unknown",
+            username,
             event["EventSource"],
             event["EventName"],
         )
