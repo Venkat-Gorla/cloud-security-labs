@@ -1,11 +1,22 @@
 """
 uv run src/main.py
 """
-from cloudtrail import fetch_events, summarize_events
+from cloudtrail import (
+    fetch_events,
+    filter_human_events,
+    summarize_events,
+)
+
+
+SHOW_HUMAN_ONLY = True
 
 
 def main() -> None:
     events, excluded_events, pages_scanned = fetch_events()
+
+    if SHOW_HUMAN_ONLY:
+        events = filter_human_events(events)
+
     summary = summarize_events(events)
 
     print()

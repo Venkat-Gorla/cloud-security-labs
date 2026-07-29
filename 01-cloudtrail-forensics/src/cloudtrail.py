@@ -99,6 +99,14 @@ def extract_identity(event: dict) -> tuple[str, str]:
     return identity_type, principal
 
 
+def filter_human_events(events: list[dict]) -> list[dict]:
+    return [
+        event
+        for event in events
+        if extract_identity(event)[0] == "IAMUser"
+    ]
+
+
 def summarize_events(events: list[dict]) -> Counter:
     counts = Counter()
 
