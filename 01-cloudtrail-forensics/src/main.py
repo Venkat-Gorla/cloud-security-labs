@@ -4,6 +4,8 @@ uv run src/main.py
 from collections import Counter
 from cloudtrail import extract_identity, fetch_human_events
 
+NUMBER_OF_DAYS = 10
+
 
 def summarize_events(events: list[dict]) -> Counter:
     summary = Counter()
@@ -25,7 +27,7 @@ def print_report(events: list[dict], total_scanned: int) -> None:
 
     print("CloudTrail Human Activity Summary")
     print("=" * 100)
-    print("Period          : Last 15 days")
+    print(f"Period          : Last {NUMBER_OF_DAYS} days")
     print(f"Events Scanned  : {total_scanned}")
     print(f"Human Events    : {len(events)}")
     print(f"Activities      : {len(summary)}")
@@ -55,7 +57,7 @@ def print_report(events: list[dict], total_scanned: int) -> None:
 
 
 def main() -> None:
-    events, total_scanned = fetch_human_events()
+    events, total_scanned = fetch_human_events(NUMBER_OF_DAYS)
 
     print_report(
         events,

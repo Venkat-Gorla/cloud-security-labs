@@ -4,10 +4,10 @@ import boto3
 
 
 PAGE_SIZE = 50
-PROGRESS_INTERVAL = 5
+PROGRESS_INTERVAL = 40
 
 
-def fetch_human_events(days: int = 7) -> tuple[list[dict], int]:
+def fetch_human_events(days: int) -> tuple[list[dict], int]:
     client = boto3.client("cloudtrail")
     start_time = datetime.now(UTC) - timedelta(days=days)
     paginator = client.get_paginator("lookup_events")
