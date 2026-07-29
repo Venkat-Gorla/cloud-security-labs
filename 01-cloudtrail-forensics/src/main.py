@@ -5,7 +5,7 @@ from cloudtrail import fetch_events, summarize_events
 
 
 def main() -> None:
-    events, ignored_events, pages_scanned = fetch_events()
+    events, excluded_events, pages_scanned = fetch_events()
     summary = summarize_events(events)
 
     print()
@@ -13,7 +13,7 @@ def main() -> None:
     print("=" * 120)
     print("Period            : Last 15 days")
     print(f"Events Analyzed   : {len(events)}")
-    print(f"Events Ignored    : {ignored_events}")
+    print(f"Events Excluded   : {excluded_events}")
     print(f"Pages Scanned     : {pages_scanned}")
     print(f"Unique Activities : {len(summary)}")
     print("=" * 120)
