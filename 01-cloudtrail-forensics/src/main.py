@@ -4,6 +4,7 @@ uv run src/main.py
 from collections import Counter
 from cloudtrail import extract_identity, fetch_human_events
 
+USERNAME = ""
 NUMBER_OF_DAYS = 3
 
 REPORT_EXCLUDED_EVENTS = {
@@ -65,7 +66,9 @@ def print_report(events: list[dict], total_scanned: int) -> None:
 
 
 def main() -> None:
-    events, total_scanned = fetch_human_events(NUMBER_OF_DAYS)
+    events, total_scanned = fetch_human_events(
+        username=USERNAME,
+        days=NUMBER_OF_DAYS)
 
     print_report(
         events,

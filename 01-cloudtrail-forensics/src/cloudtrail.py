@@ -7,7 +7,7 @@ PAGE_SIZE = 50
 PROGRESS_INTERVAL = 40
 
 
-def fetch_human_events(days: int) -> tuple[list[dict], int]:
+def fetch_human_events(username: str, days: int) -> tuple[list[dict], int]:
     client = boto3.client("cloudtrail")
     start_time = datetime.now(UTC) - timedelta(days=days)
     paginator = client.get_paginator("lookup_events")
@@ -21,6 +21,12 @@ def fetch_human_events(days: int) -> tuple[list[dict], int]:
 
     for page in paginator.paginate(
         StartTime=start_time,
+        LookupAttributes=[
+            {
+            "AttributeKey": "Username",
+            "AttributeValue": username,
+            }
+        ],
         PaginationConfig={"PageSize": PAGE_SIZE},
     ):
         pages_processed += 1
@@ -34,8 +40,7 @@ def fetch_human_events(days: int) -> tuple[list[dict], int]:
         if pages_processed % PROGRESS_INTERVAL == 0:
             print(
                 f"Pages processed: {pages_processed} | "
-                f"Events scanned: {total_events_scanned} | "
-                f"Human events: {len(human_events)}"
+                f"Events fetched: {total_events_scanned}"
             )
 
     print()
