@@ -1,10 +1,11 @@
 from collections import Counter
 from datetime import UTC, datetime, timedelta
+import json
 
 import boto3
 
 
-TARGET_EVENT_COUNT = 100
+TARGET_EVENT_COUNT = 200
 PAGE_SIZE = 50
 
 IGNORED_EVENT_TYPES = {
@@ -46,14 +47,42 @@ def fetch_events(days: int = 15) -> tuple[list[dict], int, int]:
     return events, ignored_events, pages_scanned
 
 
+def extract_identity(event: dict) -> tuple[str, str]:
+    cloudtrail_event = json.loads(event["CloudTrailEvent"])
+
+    identity = cloudtrail_event.get("userIdentity", {})
+    identity_type = identity.get("type", "Unknown")
+
+    if identity_type == "IAMUser":
+        principal = identity.get("userName", "Unknown")
+
+    elif identity_type == "AssumedRole":
+        session_context = identity.get("sessionContext", {})
+        issuer = session_context.get("sessionIssuer", {})
+        principal = issuer.get("userName", "Unknown")
+
+    elif identity_type == "AWSService":
+        principal = identity.get("invokedBy", "Unknown")
+
+    else:
+        principal = (
+            identity.get("arn")
+            or identity.get("principalId")
+            or "Unknown"
+        )
+
+    return identity_type, principal
+
+
 def summarize_events(events: list[dict]) -> Counter:
     counts = Counter()
 
     for event in events:
-        username = event.get("Username", "Unknown")
+        identity_type, principal = extract_identity(event)
 
         key = (
-            username,
+            identity_type,
+            principal,
             event["EventSource"],
             event["EventName"],
         )

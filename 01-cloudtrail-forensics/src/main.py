@@ -10,20 +10,37 @@ def main() -> None:
 
     print()
     print("CloudTrail Activity Summary")
-    print("=" * 100)
+    print("=" * 120)
     print("Period            : Last 15 days")
     print(f"Events Analyzed   : {len(events)}")
     print(f"Events Ignored    : {ignored_events}")
     print(f"Pages Scanned     : {pages_scanned}")
     print(f"Unique Activities : {len(summary)}")
-    print("=" * 100)
+    print("=" * 120)
     print()
 
-    print(f"{'Count':>8}  {'User':<35} {'Service':<35} {'Event'}")
-    print("-" * 100)
+    print(
+        f"{'Count':>8}  "
+        f"{'Identity Type':<18} "
+        f"{'Principal':<35} "
+        f"{'Service':<35} "
+        f"{'Event'}"
+    )
+    print("-" * 120)
 
-    for (user, service, event), count in summary.most_common():
-        print(f"{count:>8}  {user:<35} {service:<35} {event}")
+    for (
+        identity_type,
+        principal,
+        service,
+        event,
+    ), count in summary.most_common():
+        print(
+            f"{count:>8}  "
+            f"{identity_type:<18} "
+            f"{principal:<35} "
+            f"{service:<35} "
+            f"{event}"
+        )
 
 
 if __name__ == "__main__":
