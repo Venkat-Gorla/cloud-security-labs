@@ -62,3 +62,25 @@ def extract_identity(event: dict) -> str:
     identity = cloudtrail_event.get("userIdentity", {})
 
     return identity.get("userName", "Unknown")
+
+
+def classify_origin(event: dict) -> str:
+    cloudtrail_event = json.loads(event["CloudTrailEvent"])
+    user_agent = cloudtrail_event.get("userAgent", "").lower()
+
+    if "console.amazonaws.com" in user_agent:
+        return "Console"
+
+    if "aws-cli" in user_agent:
+        return "AWS CLI"
+
+    if "boto3" in user_agent or "botocore" in user_agent:
+        return "Python SDK"
+
+    if "cloudformation" in user_agent:
+        return "CloudFormation"
+
+    if "internal" in user_agent:
+        return "AWS Service"
+
+    return user_agent or "Unknown"

@@ -4,7 +4,11 @@ uv run src/main.py --user <username> --days 3
 """
 import argparse
 from collections import Counter
-from cloudtrail import extract_identity, fetch_human_events
+from cloudtrail import (
+    fetch_human_events,
+    extract_identity,
+    classify_origin,
+)
 
 NUMBER_OF_DAYS = 3
 
@@ -24,6 +28,7 @@ def summarize_events(events: list[dict]) -> Counter:
         summary[
             (
                 extract_identity(event),
+                classify_origin(event),
                 event["EventSource"],
                 event["EventName"],
             )
@@ -46,6 +51,7 @@ def print_report(events: list[dict], days: int) -> None:
     print(
         f"{'Count':>8}  "
         f"{'User':<20} "
+        f"{'Origin':<18} "
         f"{'Service':<35} "
         f"{'Event'}"
     )
@@ -53,6 +59,7 @@ def print_report(events: list[dict], days: int) -> None:
 
     for (
         user,
+        origin,
         service,
         event_name,
     ), count in summary.most_common():
@@ -60,6 +67,7 @@ def print_report(events: list[dict], days: int) -> None:
         print(
             f"{count:>8}  "
             f"{user:<20} "
+            f"{origin:<18} "
             f"{service:<35} "
             f"{event_name}"
         )
