@@ -4,13 +4,21 @@ uv run src/main.py
 from collections import Counter
 from cloudtrail import extract_identity, fetch_human_events
 
-NUMBER_OF_DAYS = 10
+NUMBER_OF_DAYS = 3
+
+REPORT_EXCLUDED_EVENTS = {
+    ("cloudtrail.amazonaws.com", "LookupEvents"),
+}
 
 
 def summarize_events(events: list[dict]) -> Counter:
     summary = Counter()
 
     for event in events:
+        event_key = (event["EventSource"], event["EventName"])
+        if event_key in REPORT_EXCLUDED_EVENTS:
+            continue
+
         summary[
             (
                 extract_identity(event),
@@ -25,11 +33,11 @@ def summarize_events(events: list[dict]) -> Counter:
 def print_report(events: list[dict], total_scanned: int) -> None:
     summary = summarize_events(events)
 
-    print("CloudTrail Human Activity Summary")
+    print("CloudTrail IAMUser Activity Summary")
     print("=" * 100)
     print(f"Period          : Last {NUMBER_OF_DAYS} days")
     print(f"Events Scanned  : {total_scanned}")
-    print(f"Human Events    : {len(events)}")
+    print(f"IAMUser Events  : {len(events)}")
     print(f"Activities      : {len(summary)}")
     print("=" * 100)
     print()
