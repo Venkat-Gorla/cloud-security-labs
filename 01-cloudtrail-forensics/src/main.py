@@ -1,57 +1,66 @@
 """
 uv run src/main.py
 """
-from cloudtrail import (
-    fetch_events,
-    filter_human_events,
-    summarize_events,
-)
+from collections import Counter
+from cloudtrail import extract_identity, fetch_human_events
 
 
-SHOW_HUMAN_ONLY = True
+def summarize_events(events: list[dict]) -> Counter:
+    summary = Counter()
+
+    for event in events:
+        summary[
+            (
+                extract_identity(event),
+                event["EventSource"],
+                event["EventName"],
+            )
+        ] += 1
+
+    return summary
 
 
-def main() -> None:
-    events, excluded_events, pages_scanned = fetch_events()
-
-    if SHOW_HUMAN_ONLY:
-        events = filter_human_events(events)
-
+def print_report(events: list[dict], total_scanned: int) -> None:
     summary = summarize_events(events)
 
-    print()
-    print("CloudTrail Activity Summary")
-    print("=" * 120)
-    print("Period            : Last 15 days")
-    print(f"Events Analyzed   : {len(events)}")
-    print(f"Events Excluded   : {excluded_events}")
-    print(f"Pages Scanned     : {pages_scanned}")
-    print(f"Unique Activities : {len(summary)}")
-    print("=" * 120)
+    print("CloudTrail Human Activity Summary")
+    print("=" * 100)
+    print("Period          : Last 15 days")
+    print(f"Events Scanned  : {total_scanned}")
+    print(f"Human Events    : {len(events)}")
+    print(f"Activities      : {len(summary)}")
+    print("=" * 100)
     print()
 
     print(
         f"{'Count':>8}  "
-        f"{'Identity Type':<18} "
-        f"{'Principal':<35} "
+        f"{'User':<20} "
         f"{'Service':<35} "
         f"{'Event'}"
     )
-    print("-" * 120)
+    print("-" * 100)
 
     for (
-        identity_type,
-        principal,
+        user,
         service,
-        event,
+        event_name,
     ), count in summary.most_common():
+
         print(
             f"{count:>8}  "
-            f"{identity_type:<18} "
-            f"{principal:<35} "
+            f"{user:<20} "
             f"{service:<35} "
-            f"{event}"
+            f"{event_name}"
         )
+
+
+def main() -> None:
+    events, total_scanned = fetch_human_events()
+
+    print_report(
+        events,
+        total_scanned,
+    )
 
 
 if __name__ == "__main__":
