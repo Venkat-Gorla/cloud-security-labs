@@ -1,15 +1,31 @@
-# CloudTrail Forensics
+# Lab 01 - CloudTrail Forensics
 
-A Python tool to analyze AWS CloudTrail management events.
+## Problem
 
-Current capabilities:
+CloudTrail contains a complete audit history of AWS management activity, but identifying meaningful human actions from thousands of events can be time-consuming.
 
-- Query recent CloudTrail events
-- Aggregate event counts
-- Display activity summary
+## Goal
 
-Future:
+Build a lightweight Python tool to analyze CloudTrail management events and summarize IAM user activity by service, API operation, and request origin.
 
-- Identity analysis
-- User-agent classification
-- Timeline reconstruction
+## Success Criteria
+
+| Check                                              | Status |
+| -------------------------------------------------- | :----: |
+| CloudTrail IAM user activity analyzed              |   ✅   |
+| Activity summarized by service, action, and origin |   ✅   |
+| Forensic activity report generated                 |   ✅   |
+
+## Practical Security Uses
+
+- Investigate unexpected AWS changes.
+- Review IAM user activity over a configurable time period.
+- Distinguish Console activity from SDK or CLI automation.
+- Understand which AWS services are actively being used.
+- Build a foundation for custom security analytics and forensic tooling.
+
+## Limitations
+
+- Analyzes CloudTrail **management events** only.
+- Does not analyze CloudTrail **data events** (for example, S3 object access or DynamoDB item operations).
+- Supports analysis for a single IAM user per execution.
