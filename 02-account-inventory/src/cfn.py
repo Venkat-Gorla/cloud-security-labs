@@ -33,3 +33,23 @@ def list_stack_resources(client, stack_name: str) -> dict[str, list[str]]:
             resources[resource_type].append(physical_id)
 
     return dict(sorted(resources.items()))
+
+
+def get_managed_resource_names(
+    client,
+    resource_type: str,
+) -> set[str]:
+    """
+    Return the physical IDs of all CloudFormation-managed resources of the
+    requested type.
+    """
+    managed_resources: set[str] = set()
+
+    for stack in list_stacks(client):
+        resources = list_stack_resources(client, stack["StackName"])
+
+        managed_resources.update(
+            resources.get(resource_type, [])
+        )
+
+    return managed_resources
