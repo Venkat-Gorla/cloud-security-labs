@@ -14,17 +14,17 @@ def print_unmanaged_lambda(
 ) -> None:
     unmanaged_resources = sorted(all_resources - managed_resources)
 
-    print("Unmanaged Lambda Functions")
+    print("Lambda Functions Outside CloudFormation")
     print("=" * 100)
     print()
 
-    print(f"Managed Functions   : {len(managed_resources)}")
-    print(f"Total Functions     : {len(all_resources)}")
-    print(f"Unmanaged Functions : {len(unmanaged_resources)}")
+    print(f"CloudFormation Functions : {len(managed_resources)}")
+    print(f"Total Functions          : {len(all_resources)}")
+    print(f"Outside CloudFormation   : {len(unmanaged_resources)}")
     print()
 
     if not unmanaged_resources:
-        print("No unmanaged Lambda functions found.")
+        print("No Lambda functions found outside CloudFormation.")
         return
 
     print("-" * 100)
