@@ -16,8 +16,7 @@ def fetch_human_events(username: str, days: int) -> tuple[list[dict], int]:
     pages_processed = 0
     total_events_scanned = 0
 
-    print("Scanning CloudTrail history...")
-    print()
+    print("Scanning CloudTrail history...\n")
 
     for page in paginator.paginate(
         StartTime=start_time,
@@ -43,9 +42,7 @@ def fetch_human_events(username: str, days: int) -> tuple[list[dict], int]:
                 f"Events fetched: {total_events_scanned}"
             )
 
-    print()
-    print("CloudTrail scan complete.")
-    print()
+    print("\nCloudTrail scan complete.\n")
 
     return human_events, total_events_scanned
 
