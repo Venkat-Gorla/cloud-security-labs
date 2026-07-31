@@ -1,0 +1,16 @@
+{
+  "principals": [
+    {
+      "id": "alice",
+      "role": "Administrator"
+    },
+    {
+      "id": "bob",
+      "role": "Support"
+    },
+    {
+      "id": "charlie",
+      "role": "Finance"
+    }
+  ]
+}

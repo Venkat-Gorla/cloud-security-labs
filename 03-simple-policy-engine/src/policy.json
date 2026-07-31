@@ -1,0 +1,18 @@
+{
+  "roles": {
+    "Administrator": [
+      "ViewCustomer",
+      "UpdateCustomer",
+      "DeleteCustomer",
+      "RefundCustomer"
+    ],
+    "Support": [
+      "ViewCustomer",
+      "UpdateCustomer"
+    ],
+    "Finance": [
+      "ViewCustomer",
+      "RefundCustomer"
+    ]
+  }
+}
