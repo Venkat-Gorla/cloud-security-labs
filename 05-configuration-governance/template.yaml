@@ -28,3 +28,31 @@ Resources:
 
         - Key: ManagedBy
           Value: CloudFormation
+
+  ConfigLabFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${ProjectPrefix}-handler"
+      CodeUri: src/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      MemorySize: 128
+      Timeout: 10
+      Architectures:
+        - arm64
+
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref ConfigLabTable
+
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource: !GetAtt ConfigLabTable.Arn
+
+      Tags:
+        Project: !Ref ProjectPrefix
+        ManagedBy: CloudFormation
