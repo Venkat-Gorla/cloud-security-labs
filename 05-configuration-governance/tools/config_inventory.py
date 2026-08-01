@@ -5,20 +5,10 @@ uv run tools/config_inventory.py
 import boto3
 
 
-def print_recorder(recorder: dict) -> None:
-    print("Configuration Recorder")
-    print("=" * 100)
-    print()
-
-    role_name = recorder["roleARN"].split("/")[-1]
-    print(f"Name              : {recorder['name']}")
-    print(f"Role Name         : {role_name}\n")
-
-    recording_group = recorder["recordingGroup"]
-    strategy = recording_group["recordingStrategy"]["useOnly"]
-
+def print_recording_strategy(recording_group: dict) -> None:
     print("Recording Strategy")
 
+    strategy = recording_group["recordingStrategy"]["useOnly"]
     if strategy == "EXCLUSION_BY_RESOURCE_TYPES":
         excluded = recording_group["exclusionByResourceTypes"]["resourceTypes"]
 
@@ -35,6 +25,19 @@ def print_recorder(recorder: dict) -> None:
         f"Global Resource Types : "
         f"{recording_group['includeGlobalResourceTypes']}"
     )
+
+
+def print_recorder(recorder: dict) -> None:
+    print("Configuration Recorder")
+    print("=" * 100)
+    print()
+
+    role_name = recorder["roleARN"].split("/")[-1]
+    print(f"Name              : {recorder['name']}")
+    print(f"Role Name         : {role_name}\n")
+
+    recording_group = recorder["recordingGroup"]
+    print_recording_strategy(recording_group)
 
 
 def print_status(status: dict) -> None:
