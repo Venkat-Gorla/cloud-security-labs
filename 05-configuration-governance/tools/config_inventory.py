@@ -10,14 +10,29 @@ def print_recorder(recorder: dict) -> None:
     print("=" * 100)
     print()
 
+    role_name = recorder["roleARN"].split("/")[-1]
     print(f"Name              : {recorder['name']}")
-    print(f"Role ARN          : {recorder['roleARN']}")
+    print(f"Role Name         : {role_name}\n")
 
     recording_group = recorder["recordingGroup"]
+    strategy = recording_group["recordingStrategy"]["useOnly"]
 
-    print(f"All Resources     : {recording_group['allSupported']}")
+    print("Recording Strategy")
+
+    if strategy == "EXCLUSION_BY_RESOURCE_TYPES":
+        excluded = recording_group["exclusionByResourceTypes"]["resourceTypes"]
+
+        print("Mode              : Exclude resource types")
+        print(f"Excluded Types    : {len(excluded)}")
+
+        for resource_type in sorted(excluded):
+            print(f"    {resource_type}")
+    else:
+        print(f"Mode              : {strategy}")
+
+    print()
     print(
-        f"Global Resources  : "
+        f"Global Resource Types : "
         f"{recording_group['includeGlobalResourceTypes']}"
     )
 
