@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Cloud Security Lab 05 - Configuration Governance
+
+Parameters:
+  ProjectPrefix:
+    Type: String
+    Default: cloud-security-config-lab
+
+Resources:
+  ConfigLabTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${ProjectPrefix}-table"
+      BillingMode: PAY_PER_REQUEST
+
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectPrefix
+
+        - Key: ManagedBy
+          Value: CloudFormation
