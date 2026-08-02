@@ -10,11 +10,11 @@ from config_formatter import print_configuration_item
 def get_latest_configuration_item(
     client,
     resource_type: str,
-    resource_name: str,
+    resource_id: str,
 ) -> dict | None:
     response = client.get_resource_config_history(
         resourceType=resource_type,
-        resourceId=resource_name,
+        resourceId=resource_id,
         limit=1,
     )
 
@@ -31,19 +31,19 @@ def main() -> None:
         print(
             "Usage:\n"
             "uv run tools/config_resource.py "
-            "<resource-type> <resource-name>"
+            "<resource-type> <resource-id>"
         )
         raise SystemExit(1)
 
     resource_type = sys.argv[1]
-    resource_name = sys.argv[2]
+    resource_id = sys.argv[2]
 
     client = boto3.client("config")
 
     item = get_latest_configuration_item(
         client,
         resource_type,
-        resource_name,
+        resource_id,
     )
 
     if item is None:
