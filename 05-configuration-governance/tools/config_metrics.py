@@ -2,44 +2,61 @@
 uv run tools/config_metrics.py
 """
 
+from datetime import UTC, datetime, timedelta
 import boto3
 
+RESOURCE_TYPES = [
+    "All",
+    "AWS::Lambda::Function",
+    "AWS::DynamoDB::Table",
+    "AWS::S3::Bucket",
+    "AWS::CloudFormation::Stack",
+]
 
-def print_config_metrics(metrics) -> None:
-    for metric in sorted(metrics, key=lambda m: m["MetricName"]):
-        print(metric["MetricName"])
 
-        if metric["Dimensions"]:
-            for dimension in metric["Dimensions"]:
-                print(
-                    f"    {dimension['Name']} = "
-                    f"{dimension.get('Value', '*')}"
-                )
+def get_configuration_items_recorded(
+    client,
+    resource_type: str,
+) -> int:
+    days = 1
 
-        print()
+    response = client.get_metric_statistics(
+        Namespace="AWS/Config",
+        MetricName="ConfigurationItemsRecorded",
+        Dimensions=[
+            {
+                "Name": "ResourceType",
+                "Value": resource_type,
+            }
+        ],
+        StartTime=datetime.now(UTC) - timedelta(days=days),
+        EndTime=datetime.now(UTC),
+        Period=days * 24 * 60 * 60,
+        Statistics=["Sum"],
+    )
 
-    # unique_metric_names = {
-    #     metric["MetricName"]
-    #     for metric in metrics
-    # }
+    datapoints = response["Datapoints"]
 
-    # print("\nPrinting Config metric names:")
-    # print("=============================")
-    # for name in sorted(unique_metric_names):
-    #     print(name)
+    if not datapoints:
+        return 0
+
+    return int(datapoints[0]["Sum"])
 
 
 def main() -> None:
     client = boto3.client("cloudwatch")
-    paginator = client.get_paginator("list_metrics")
 
-    metrics = []
+    print("Configuration Item Metrics")
+    print("=" * 100)
+    print()
 
-    for page in paginator.paginate(Namespace="AWS/Config"):
-        metrics.extend(page["Metrics"])
+    for resource_type in RESOURCE_TYPES:
+        count = get_configuration_items_recorded(
+            client,
+            resource_type,
+        )
 
-    print(f"Metrics Found : {len(metrics)}\n")
-    print_config_metrics(metrics)
+        print(f"{resource_type:<35} {count:>8}")
 
 
 if __name__ == "__main__":
