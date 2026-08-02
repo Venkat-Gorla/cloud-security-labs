@@ -6,7 +6,7 @@ Cloud environments change continuously. Without recording infrastructure changes
 
 ## Goal
 
-Build Python tools to inspect AWS Config programmatically by exploring recorder status, recording metrics, discovered resources, and configuration history.
+Build Python tools to inspect AWS Config by exploring recorder status, recording metrics, discovered resources, and configuration history.
 
 ## Architecture
 
