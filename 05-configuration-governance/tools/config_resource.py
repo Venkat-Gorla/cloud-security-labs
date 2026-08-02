@@ -2,10 +2,9 @@
 uv run tools/config_resource.py AWS::DynamoDB::Table tinyurl-mappings
 """
 
-from pprint import pprint
 import sys
 import boto3
-import json
+from config_formatter import print_configuration_item
 
 
 def get_latest_configuration_item(
@@ -25,33 +24,6 @@ def get_latest_configuration_item(
         return None
 
     return history[0]
-
-
-def print_configuration_item(item: dict) -> None:
-    print("Configuration Item")
-    print("=" * 100)
-    print()
-
-    print(f"Resource Type       : {item['resourceType']}")
-    print(f"Resource Name       : {item['resourceName']}")
-    print(f"Resource ID         : {item['resourceId']}")
-    print(f"Region              : {item['awsRegion']}")
-    print(f"Capture Time        : {item['configurationItemCaptureTime']}")
-    print(f"Configuration State : {item['configurationItemStatus']}")
-    print(f"Relationships       : {len(item['relationships'])}")
-
-    configuration = item.get("configuration", {})
-    if not configuration:
-        return
-
-    configuration = json.loads(configuration)
-
-    print()
-    print("Configuration Keys")
-    print("-" * 100)
-
-    for key in sorted(configuration.keys()):
-        print(key)
 
 
 def main() -> None:
