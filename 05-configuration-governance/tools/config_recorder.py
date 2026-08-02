@@ -1,5 +1,5 @@
 """
-uv run tools/config_inventory.py
+uv run tools/config_recorder.py
 """
 
 import boto3
