@@ -15,13 +15,14 @@ def get_latest_configuration_item(
     response = client.get_resource_config_history(
         resourceType=resource_type,
         resourceId=resource_id,
-        limit=1,
+        limit=2,
     )
 
     history = response["configurationItems"]
-
     if not history:
         return None
+
+    print(f"Configuration Items Retrieved : {len(history)}\n")
 
     return history[0]
 
