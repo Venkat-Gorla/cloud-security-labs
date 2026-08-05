@@ -6,7 +6,7 @@ Cloud environments change continuously. Without recording infrastructure changes
 
 ## Goal
 
-Build Python tools to inspect AWS Config by exploring recorder status, recording metrics, discovered resources, and configuration history.
+Build Python tools to inspect AWS Config by exploring recorder status, operational metrics, discovered resources, and configuration history.
 
 ## Architecture
 
@@ -35,3 +35,7 @@ AWS Config
 | Configuration Items capture the state of AWS resources         |   ✅   |
 | Infrastructure changes create new Configuration Items          |   ✅   |
 | Configuration history is accessible through the AWS Config API |   ✅   |
+
+## Key Finding
+
+The `ConfigurationItemsRecorded` CloudWatch metric matched the number of Configuration Items billed by AWS, confirming a direct relationship between service metrics and cost.
