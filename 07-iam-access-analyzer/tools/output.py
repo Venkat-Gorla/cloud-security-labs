@@ -36,13 +36,7 @@ def print_finding(finding: dict, number: int) -> None:
     print()
 
 
-def print_bucket_configuration(
-    bucket_name: str,
-    region: str,
-    website: dict,
-    public_access_block: dict,
-    policy_statements: list[dict],
-) -> None:
+def print_bucket_header(bucket_name: str, region: str) -> None:
     print("Amazon S3 Bucket Configuration")
     print(SEPARATOR)
     print()
@@ -50,6 +44,8 @@ def print_bucket_configuration(
     print(f"Region              : {region}")
     print()
 
+
+def print_website_configuration(website: dict) -> None:
     print("Website")
     print(SUBSEPARATOR)
     print(
@@ -58,28 +54,32 @@ def print_bucket_configuration(
     )
     print()
 
-    configuration = public_access_block.get(
+
+def print_public_access_block(configuration: dict) -> None:
+    settings = configuration.get(
         "PublicAccessBlockConfiguration",
         {},
     )
 
     print("Public Access Block")
     print(SUBSEPARATOR)
-    print(f"Block public ACLs   : {configuration.get('BlockPublicAcls', '-')}")
+    print(f"Block public ACLs   : {settings.get('BlockPublicAcls', '-')}")
     print(
         f"Block public policy : "
-        f"{configuration.get('BlockPublicPolicy', '-')}"
+        f"{settings.get('BlockPublicPolicy', '-')}"
     )
     print(
         f"Ignore public ACLs  : "
-        f"{configuration.get('IgnorePublicAcls', '-')}"
+        f"{settings.get('IgnorePublicAcls', '-')}"
     )
     print(
         f"Restrict public     : "
-        f"{configuration.get('RestrictPublicBuckets', '-')}"
+        f"{settings.get('RestrictPublicBuckets', '-')}"
     )
     print()
 
+
+def print_bucket_policy(policy_statements: list[dict]) -> None:
     print("Bucket Policy")
     print(SUBSEPARATOR)
 
@@ -91,19 +91,36 @@ def print_bucket_configuration(
     for statement in policy_statements:
         print(f"Statement           : {statement.get('Sid', '-')}")
         print(f"Effect              : {statement.get('Effect', '-')}")
-        print(
-            f"Principal           : "
-            f"{format_principals(statement.get('Principal', {}))}"
-            if isinstance(statement.get("Principal"), dict)
-            else f"Principal           : {statement.get('Principal', '-')}"
-        )
+
+        principal = statement.get("Principal", {})
+        if isinstance(principal, dict):
+            principal_text = format_principals(principal)
+        else:
+            principal_text = str(principal)
+
+        print(f"Principal           : {principal_text}")
         print(
             f"Action              : "
             f"{format_actions(statement.get('Action', []))}"
         )
         print(
-            f"Resource            : {format_value(statement.get('Resource', '-'))}")
+            f"Resource            : "
+            f"{format_value(statement.get('Resource', '-'))}"
+        )
         print()
+
+
+def print_bucket_configuration(
+    bucket_name: str,
+    region: str,
+    website: dict,
+    public_access_block: dict,
+    policy_statements: list[dict],
+) -> None:
+    print_bucket_header(bucket_name, region)
+    print_website_configuration(website)
+    print_public_access_block(public_access_block)
+    print_bucket_policy(policy_statements)
 
 
 def format_actions(actions: str | list[str]) -> str:
