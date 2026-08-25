@@ -19,16 +19,33 @@ def get_security_hub_status(client) -> dict:
         }
 
 
+def get_enabled_standards(client) -> dict:
+    try:
+        return client.get_enabled_standards()
+    except ClientError as error:
+        return {
+            "Error": error.response.get("Error", {}),
+        }
+
+
 def main() -> None:
     client = boto3.client("securityhub")
-    response = get_security_hub_status(client)
+
+    status_response = get_security_hub_status(client)
+    standards_response = get_enabled_standards(client)
 
     print("AWS Security Hub")
     print("=" * 50)
     print()
-    print("Raw API Response")
+
+    print("Hub Status")
     print("-" * 50)
-    pprint(response)
+    pprint(status_response)
+    print()
+
+    print("Enabled Standards")
+    print("-" * 50)
+    pprint(standards_response)
     print()
 
 
