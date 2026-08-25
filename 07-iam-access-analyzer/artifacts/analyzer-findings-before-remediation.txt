@@ -1,0 +1,17 @@
+> uv run tools/analyzer_findings.py
+
+IAM Access Analyzer Findings
+==================================================
+
+Findings: 1
+
+Finding 1
+--------------------------------------------------
+Resource Type       : AWS::S3::Bucket
+Resource            : arn:aws:s3:::video-streaming-etag-demo-client
+Principal           : AWS: *
+Action              : s3:GetObject
+Public              : True
+Status              : ACTIVE
+Source              : POLICY
+Analyzed At         : 2026-08-25 09:38:49.179000+00:00

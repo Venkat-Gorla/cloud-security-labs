@@ -1,0 +1,26 @@
+> uv run tools/s3_bucket_status.py video-streaming-etag-demo-client
+
+Amazon S3 Bucket Configuration
+==================================================
+
+Bucket              : video-streaming-etag-demo-client
+Region              : ap-south-1
+
+Website
+--------------------------------------------------
+Index document      : index.html
+
+Public Access Block
+--------------------------------------------------
+Block public ACLs   : False
+Block public policy : False
+Ignore public ACLs  : False
+Restrict public     : False
+
+Bucket Policy
+--------------------------------------------------
+Statement           : PublicRead
+Effect              : Allow
+Principal           : *
+Action              : s3:GetObject
+Resource            : arn:aws:s3:::video-streaming-etag-demo-client/*
