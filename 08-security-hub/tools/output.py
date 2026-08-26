@@ -5,6 +5,13 @@ from datetime import datetime
 SEPARATOR = "=" * 50
 SUBSEPARATOR = "-" * 50
 
+STANDARD_NAMES = {
+    "cis-aws-foundations-benchmark": "CIS AWS Foundations Benchmark",
+    "aws-foundational-security-best-practices": (
+        "AWS Foundational Security Best Practices"
+    ),
+}
+
 
 def get_hub_status(response: dict) -> str:
     return "ENABLED" if response.get("HubArn") else "DISABLED"
@@ -18,14 +25,16 @@ def format_timestamp(value: str) -> str:
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def format_standard_name(standards_arn: str) -> str:
-    if "cis-aws-foundations-benchmark" in standards_arn:
-        return "CIS AWS Foundations Benchmark v1.2.0"
+def format_standard(standards_arn: str) -> tuple[str, str]:
+    parts = standards_arn.rstrip("/").split("/")
 
-    if "aws-foundational-security-best-practices" in standards_arn:
-        return "AWS Foundational Security Best Practices v1.0.0"
+    for identifier, name in STANDARD_NAMES.items():
+        if identifier in parts:
+            index = parts.index(identifier)
+            version = parts[index + 2] if len(parts) > index + 2 else "-"
+            return name, version
 
-    return standards_arn
+    return standards_arn, "-"
 
 
 def print_hub_status(status: dict) -> None:
@@ -59,12 +68,14 @@ def print_enabled_standards(standards_response: dict) -> None:
     subscriptions = standards_response.get("StandardsSubscriptions", [])
 
     for subscription in subscriptions:
-        name = format_standard_name(
+        name, version = format_standard(
             subscription.get("StandardsArn", "-")
         )
+
         status = subscription.get("StandardsStatus", "-")
 
         print(name)
+        print(f"Version             : {version}")
         print(f"Status              : {status}")
         print()
 
