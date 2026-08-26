@@ -6,6 +6,10 @@ SEPARATOR = "=" * 50
 SUBSEPARATOR = "-" * 50
 
 
+def get_hub_status(response: dict) -> str:
+    return "ENABLED" if response.get("HubArn") else "DISABLED"
+
+
 def format_timestamp(value: str) -> str:
     if not value:
         return "-"
@@ -31,7 +35,7 @@ def print_hub_status(status: dict) -> None:
     print("AWS Security Hub")
     print(SEPARATOR)
     print()
-    print("Status              : ENABLED")
+    print(f"Status              : {get_hub_status(status)}")
     print(f"Region              : {region}")
     print(
         f"Subscribed At       : "
