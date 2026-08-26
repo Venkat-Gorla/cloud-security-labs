@@ -4,10 +4,10 @@ Inspect the current AWS Security Hub status.
 uv run tools/security_hub_status.py
 """
 
-from pprint import pprint
-
 import boto3
 from botocore.exceptions import ClientError
+
+from output import print_security_hub_status
 
 
 def get_security_hub_status(client) -> dict:
@@ -34,19 +34,10 @@ def main() -> None:
     status_response = get_security_hub_status(client)
     standards_response = get_enabled_standards(client)
 
-    print("AWS Security Hub")
-    print("=" * 50)
-    print()
-
-    print("Hub Status")
-    print("-" * 50)
-    pprint(status_response)
-    print()
-
-    print("Enabled Standards")
-    print("-" * 50)
-    pprint(standards_response)
-    print()
+    print_security_hub_status(
+        status_response,
+        standards_response,
+    )
 
 
 if __name__ == "__main__":
