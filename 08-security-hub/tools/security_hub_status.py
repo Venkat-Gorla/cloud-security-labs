@@ -4,12 +4,11 @@ Inspect the current AWS Security Hub status.
 uv run tools/security_hub_status.py
 """
 
-from pprint import pprint
-
+from pathlib import Path
 import boto3
 from botocore.exceptions import ClientError
-
 from output import print_security_hub_status
+from security_hub_analysis import save_findings
 
 
 def get_security_hub_status(client) -> dict:
@@ -101,11 +100,9 @@ def main() -> None:
     )
 
     findings = get_security_hub_findings(client)
-
-    print("Security Findings")
-    print("=" * 50)
-    print()
-    print(f"Findings: {len(findings)}\n")
+    path = Path("data/security_hub_findings.json")
+    save_findings(findings, path)
+    print(f"\nSaved {len(findings)} security findings to {path}")
 
 
 if __name__ == "__main__":

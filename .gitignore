@@ -69,3 +69,4 @@ coverage/
 .nyc_output/
 
 del.txt
+08-security-hub/data/security_hub_findings.json
