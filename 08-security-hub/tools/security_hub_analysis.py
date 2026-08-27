@@ -59,6 +59,16 @@ def create_findings_dataframe(findings: list[dict]) -> pd.DataFrame:
     return pd.DataFrame(normalized_findings)
 
 
+def summarize_findings_by_severity(
+    findings_df: pd.DataFrame,
+) -> pd.Series:
+    """Count findings by severity."""
+    severity_order = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"]
+
+    summary = findings_df["Severity"].value_counts()
+    return summary.reindex(severity_order, fill_value=0)
+
+
 def main() -> None:
     findings = load_findings(DATA_PATH)
     findings_df = create_findings_dataframe(findings)
@@ -68,6 +78,15 @@ def main() -> None:
     print()
     print(f"Findings: {len(findings_df)}")
     print(f"Columns : {len(findings_df.columns)}")
+    print()
+
+    print("Findings by Severity")
+    print("-" * 50)
+
+    severity_summary = summarize_findings_by_severity(findings_df)
+
+    for severity, count in severity_summary.items():
+        print(f"{severity:<18}: {count}")
 
 
 if __name__ == "__main__":
