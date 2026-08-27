@@ -100,6 +100,28 @@ def summarize_findings_by_resource_and_control(
     return summary
 
 
+def summarize_findings_by_control_and_severity(
+    findings_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Count findings by security control and severity."""
+    severity_order = [
+        "CRITICAL",
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "INFORMATIONAL",
+    ]
+
+    summary = (
+        findings_df
+        .groupby(["ControlId", "Severity"])
+        .size()
+        .unstack(fill_value=0)
+    )
+
+    return summary.reindex(columns=severity_order, fill_value=0)
+
+
 def main() -> None:
     findings = load_findings(DATA_PATH)
     findings_df = create_findings_dataframe(findings)
@@ -120,6 +142,19 @@ def main() -> None:
     )
     print_resource_type_summary(resource_type_summary)
     print()
+
+    control_severity_summary = summarize_findings_by_control_and_severity(
+        findings_df
+    )
+
+    high_priority_controls = control_severity_summary[
+        (control_severity_summary["CRITICAL"] > 0)
+        | (control_severity_summary["HIGH"] > 0)
+    ]
+
+    print("Controls with Critical or High Findings")
+    print("-" * 50)
+    print(high_priority_controls.to_string())
 
 
 if __name__ == "__main__":
