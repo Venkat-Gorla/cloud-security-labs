@@ -4,6 +4,8 @@ Inspect the current AWS Security Hub status.
 uv run tools/security_hub_status.py
 """
 
+from pprint import pprint
+
 import boto3
 from botocore.exceptions import ClientError
 
@@ -75,6 +77,17 @@ def get_standards_controls(client, standards_response) -> list:
     return standard_controls
 
 
+def get_security_hub_findings(client) -> dict:
+    try:
+        return client.get_findings(
+            MaxResults=1,
+        )
+    except ClientError as error:
+        return {
+            "Error": error.response.get("Error", {}),
+        }
+
+
 def main() -> None:
     client = boto3.client("securityhub")
 
@@ -87,6 +100,13 @@ def main() -> None:
         standards_response,
         standard_controls,
     )
+
+    findings_response = get_security_hub_findings(client)
+
+    print("Security Findings")
+    print("=" * 50)
+    print()
+    pprint(findings_response)
 
 
 if __name__ == "__main__":
