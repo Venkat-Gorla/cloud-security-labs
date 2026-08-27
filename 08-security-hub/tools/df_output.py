@@ -54,3 +54,15 @@ def print_control_summary(
 
     for control_id, count in control_summary.head(limit).items():
         print(f"{control_id:<18}: {count}")
+
+
+def print_resource_type_summary(
+    resource_type_summary: pd.Series,
+    limit: int = 10,
+) -> None:
+    """Print the highest-volume AWS resource types."""
+    print("Top Findings by Resource Type")
+    print("-" * 50)
+
+    for resource_type, count in resource_type_summary.head(limit).items():
+        print(f"{resource_type:<24}: {count}")

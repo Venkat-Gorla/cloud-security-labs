@@ -11,6 +11,7 @@ from df_output import (
     print_findings_summary,
     print_severity_summary,
     print_control_summary,
+    print_resource_type_summary,
 )
 
 DATA_PATH = Path("data/security_hub_findings.json")
@@ -73,11 +74,12 @@ def summarize_findings_by_severity(
     return summary.reindex(severity_order, fill_value=0)
 
 
-def summarize_findings_by_control(
+def summarize_findings_by_column(
     findings_df: pd.DataFrame,
+    column: str,
 ) -> pd.Series:
-    """Count findings by Security Hub control."""
-    return findings_df["ControlId"].value_counts()
+    """Count findings grouped by a DataFrame column."""
+    return findings_df[column].value_counts()
 
 
 def main() -> None:
@@ -90,8 +92,15 @@ def main() -> None:
     print_severity_summary(severity_summary)
     print()
 
-    control_summary = summarize_findings_by_control(findings_df)
+    control_summary = summarize_findings_by_column(findings_df, "ControlId",)
     print_control_summary(control_summary)
+    print()
+
+    resource_type_summary = summarize_findings_by_column(
+        findings_df,
+        "ResourceType",
+    )
+    print_resource_type_summary(resource_type_summary)
 
 
 if __name__ == "__main__":
