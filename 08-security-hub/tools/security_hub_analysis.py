@@ -7,7 +7,10 @@ uv run tools/security_hub_analysis.py
 import json
 from pathlib import Path
 import pandas as pd
-
+from df_output import (
+    print_findings_summary,
+    print_severity_summary,
+)
 
 DATA_PATH = Path("data/security_hub_findings.json")
 
@@ -73,20 +76,10 @@ def main() -> None:
     findings = load_findings(DATA_PATH)
     findings_df = create_findings_dataframe(findings)
 
-    print("Security Hub Findings Analysis")
-    print("=" * 50)
-    print()
-    print(f"Findings: {len(findings_df)}")
-    print(f"Columns : {len(findings_df.columns)}")
-    print()
-
-    print("Findings by Severity")
-    print("-" * 50)
+    print_findings_summary(findings_df)
 
     severity_summary = summarize_findings_by_severity(findings_df)
-
-    for severity, count in severity_summary.items():
-        print(f"{severity:<18}: {count}")
+    print_severity_summary(severity_summary)
 
 
 if __name__ == "__main__":
