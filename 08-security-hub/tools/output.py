@@ -91,7 +91,7 @@ def get_control_summary(controls: list[dict]) -> tuple[int, int]:
     return total, enabled
 
 
-def print_standard_control_summary(
+def print_control_summary(
     subscription: dict,
     controls: list[dict],
 ) -> None:
@@ -107,14 +107,14 @@ def print_standard_control_summary(
     print()
 
 
-def print_standards_control_summary(
+def print_control_summaries(
     standard_controls: list[dict],
 ) -> None:
     print("Security Controls")
     print(SUBSEPARATOR)
 
     for standard in standard_controls:
-        print_standard_control_summary(
+        print_control_summary(
             standard["subscription"],
             standard["controls"],
         )
@@ -127,4 +127,4 @@ def print_security_hub_status(
 ) -> None:
     print_hub_status(status)
     print_enabled_standards(standards_response)
-    print_standards_control_summary(standard_controls)
+    print_control_summaries(standard_controls)
