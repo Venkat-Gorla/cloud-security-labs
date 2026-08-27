@@ -80,9 +80,51 @@ def print_enabled_standards(standards_response: dict) -> None:
         print()
 
 
+def get_control_summary(controls: list[dict]) -> tuple[int, int]:
+    total = len(controls)
+    enabled = sum(
+        1
+        for control in controls
+        if control.get("ControlStatus") == "ENABLED"
+    )
+
+    return total, enabled
+
+
+def print_standard_control_summary(
+    subscription: dict,
+    controls: list[dict],
+) -> None:
+    name, version = format_standard(
+        subscription.get("StandardsArn", "-")
+    )
+    total, enabled = get_control_summary(controls)
+
+    print(name)
+    print(f"Version             : {version}")
+    print(f"Controls            : {total}")
+    print(f"Enabled             : {enabled}")
+    print()
+
+
+def print_standards_control_summary(
+    standard_controls: list[dict],
+) -> None:
+    print("Security Controls")
+    print(SUBSEPARATOR)
+
+    for standard in standard_controls:
+        print_standard_control_summary(
+            standard["subscription"],
+            standard["controls"],
+        )
+
+
 def print_security_hub_status(
     status: dict,
     standards_response: dict,
+    standard_controls: list[dict],
 ) -> None:
     print_hub_status(status)
     print_enabled_standards(standards_response)
+    print_standards_control_summary(standard_controls)
