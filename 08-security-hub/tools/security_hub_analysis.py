@@ -13,6 +13,7 @@ from df_output import (
     print_control_summary,
     print_resource_type_summary,
 )
+from security_hub_prioritization import find_high_priority_controls
 
 DATA_PATH = Path("data/security_hub_findings.json")
 
@@ -68,6 +69,7 @@ def summarize_findings_by_severity(
     findings_df: pd.DataFrame,
 ) -> pd.Series:
     """Count findings by severity."""
+    # vegorla: import from security_hub_prioritization
     severity_order = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"]
 
     summary = findings_df["Severity"].value_counts()
@@ -82,6 +84,7 @@ def summarize_findings_by_column(
     return findings_df[column].value_counts()
 
 
+# vegorla: check if this function is needed, it seems to be unused
 def summarize_findings_by_resource_and_control(
     findings_df: pd.DataFrame,
 ) -> pd.DataFrame:
@@ -143,16 +146,8 @@ def main() -> None:
     print_resource_type_summary(resource_type_summary)
     print()
 
-    control_severity_summary = summarize_findings_by_control_and_severity(
-        findings_df
-    )
-
-    high_priority_controls = control_severity_summary[
-        (control_severity_summary["CRITICAL"] > 0)
-        | (control_severity_summary["HIGH"] > 0)
-    ]
-
-    print("Controls with Critical or High Findings")
+    high_priority_controls = find_high_priority_controls(findings_df)
+    print("High-Priority Controls")
     print("-" * 50)
     print(high_priority_controls.to_string())
 
