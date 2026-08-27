@@ -10,6 +10,7 @@ import pandas as pd
 from df_output import (
     print_findings_summary,
     print_severity_summary,
+    print_control_summary,
 )
 
 DATA_PATH = Path("data/security_hub_findings.json")
@@ -72,6 +73,13 @@ def summarize_findings_by_severity(
     return summary.reindex(severity_order, fill_value=0)
 
 
+def summarize_findings_by_control(
+    findings_df: pd.DataFrame,
+) -> pd.Series:
+    """Count findings by Security Hub control."""
+    return findings_df["ControlId"].value_counts()
+
+
 def main() -> None:
     findings = load_findings(DATA_PATH)
     findings_df = create_findings_dataframe(findings)
@@ -80,6 +88,10 @@ def main() -> None:
 
     severity_summary = summarize_findings_by_severity(findings_df)
     print_severity_summary(severity_summary)
+    print()
+
+    control_summary = summarize_findings_by_control(findings_df)
+    print_control_summary(control_summary)
 
 
 if __name__ == "__main__":

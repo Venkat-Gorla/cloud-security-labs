@@ -42,3 +42,15 @@ def print_severity_summary(severity_summary: pd.Series) -> None:
 
     for severity, count in severity_summary.items():
         print(f"{severity:<18}: {count}")
+
+
+def print_control_summary(
+    control_summary: pd.Series,
+    limit: int = 10,
+) -> None:
+    """Print the highest-volume Security Hub controls."""
+    print("Top Findings by Control")
+    print("-" * 50)
+
+    for control_id, count in control_summary.head(limit).items():
+        print(f"{control_id:<18}: {count}")
