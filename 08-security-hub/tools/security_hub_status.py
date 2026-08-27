@@ -77,15 +77,14 @@ def get_standards_controls(client, standards_response) -> list:
     return standard_controls
 
 
-def get_security_hub_findings(client) -> dict:
-    try:
-        return client.get_findings(
-            MaxResults=1,
-        )
-    except ClientError as error:
-        return {
-            "Error": error.response.get("Error", {}),
-        }
+def get_security_hub_findings(client) -> list[dict]:
+    paginator = client.get_paginator("get_findings")
+    findings = []
+
+    for page in paginator.paginate():
+        findings.extend(page.get("Findings", []))
+
+    return findings
 
 
 def main() -> None:
@@ -101,12 +100,12 @@ def main() -> None:
         standard_controls,
     )
 
-    findings_response = get_security_hub_findings(client)
+    findings = get_security_hub_findings(client)
 
     print("Security Findings")
     print("=" * 50)
     print()
-    pprint(findings_response)
+    print(f"Findings: {len(findings)}\n")
 
 
 if __name__ == "__main__":
