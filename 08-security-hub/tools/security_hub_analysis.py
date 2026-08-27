@@ -82,6 +82,24 @@ def summarize_findings_by_column(
     return findings_df[column].value_counts()
 
 
+def summarize_findings_by_resource_and_control(
+    findings_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Count findings by resource type and security control."""
+    summary = (
+        findings_df
+        .groupby(["ResourceType", "ControlId"])
+        .size()
+        .reset_index(name="Findings")
+        .sort_values(
+            ["ResourceType", "Findings"],
+            ascending=[True, False],
+        )
+    )
+
+    return summary
+
+
 def main() -> None:
     findings = load_findings(DATA_PATH)
     findings_df = create_findings_dataframe(findings)
@@ -101,6 +119,7 @@ def main() -> None:
         "ResourceType",
     )
     print_resource_type_summary(resource_type_summary)
+    print()
 
 
 if __name__ == "__main__":
