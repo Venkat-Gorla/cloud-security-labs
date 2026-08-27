@@ -48,12 +48,7 @@ def get_standard_controls(
         }
 
 
-def main() -> None:
-    client = boto3.client("securityhub")
-
-    status_response = get_security_hub_status(client)
-    standards_response = get_enabled_standards(client)
-
+def get_standards_controls(client, standards_response) -> list:
     standard_controls = []
 
     for subscription in standards_response.get(
@@ -76,6 +71,16 @@ def main() -> None:
                 "controls": controls_response.get("Controls", []),
             }
         )
+
+    return standard_controls
+
+
+def main() -> None:
+    client = boto3.client("securityhub")
+
+    status_response = get_security_hub_status(client)
+    standards_response = get_enabled_standards(client)
+    standard_controls = get_standards_controls(client, standards_response)
 
     print_security_hub_status(
         status_response,
