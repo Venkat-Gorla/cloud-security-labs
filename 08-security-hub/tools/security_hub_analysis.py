@@ -7,7 +7,10 @@ uv run tools/security_hub_analysis.py
 import json
 from pathlib import Path
 import pandas as pd
-from security_hub_prioritization import find_high_priority_controls
+from security_hub_prioritization import (
+    find_high_priority_controls,
+    summarize_findings_by_resource,
+)
 from df_output import (
     print_findings_summary,
     print_severity_summary,
@@ -150,6 +153,11 @@ def main() -> None:
     high_priority_controls = find_high_priority_controls(findings_df)
     print_high_priority_controls(high_priority_controls)
     print()
+
+    resource_summary = summarize_findings_by_resource(findings_df)
+    print("Top Finding Resources")
+    print("-" * 50)
+    print(resource_summary.head(20).to_string())
 
 
 if __name__ == "__main__":
