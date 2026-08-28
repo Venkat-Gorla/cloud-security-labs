@@ -126,7 +126,6 @@ def summarize_findings_by_resource(
     )
 
     resource_summary = resource_summary.join(resource_severity)
-
     resource_summary = add_severity_priority(resource_summary)
 
     return (
@@ -137,3 +136,27 @@ def summarize_findings_by_resource(
         )
         .drop(columns="SeverityRank")
     )
+
+
+def summarize_finding_concentration(
+    resource_summary: pd.DataFrame,
+    top_n: list[int],
+) -> pd.DataFrame:
+    """Calculate the percentage of findings represented by top resources."""
+    total_findings = resource_summary["Findings"].sum()
+
+    results = []
+
+    for count in top_n:
+        findings = resource_summary["Findings"].head(count).sum()
+        percentage = findings / total_findings * 100
+
+        results.append(
+            {
+                "Resources": count,
+                "Findings": findings,
+                "Percentage": percentage,
+            }
+        )
+
+    return pd.DataFrame(results)

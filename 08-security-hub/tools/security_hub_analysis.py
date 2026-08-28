@@ -10,6 +10,7 @@ import pandas as pd
 from security_hub_prioritization import (
     find_high_priority_controls,
     summarize_findings_by_resource,
+    summarize_finding_concentration,
 )
 from df_output import (
     print_findings_summary,
@@ -158,6 +159,13 @@ def main() -> None:
     print("Top Finding Resources")
     print("-" * 50)
     print(resource_summary.head(20).to_string())
+    print()
+
+    concentration = summarize_finding_concentration(
+        resource_summary,
+        [1, 5, 10, 20],
+    )
+    print(concentration)
 
 
 if __name__ == "__main__":
