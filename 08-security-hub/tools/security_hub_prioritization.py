@@ -15,6 +15,12 @@ SEVERITY_ORDER = [
     "INFORMATIONAL",
 ]
 
+SEVERITY_RANK = {
+    severity: rank
+    for rank, severity in enumerate(SEVERITY_ORDER)
+}
+SEVERITY_RANK["UNKNOWN"] = len(SEVERITY_ORDER)
+
 
 def get_highest_severity(
     row: pd.Series,
@@ -39,14 +45,8 @@ def prioritize_controls(
         axis=1,
     )
 
-    severity_rank = {
-        severity: rank
-        for rank, severity in enumerate(SEVERITY_ORDER)
-    }
-    severity_rank["UNKNOWN"] = len(SEVERITY_ORDER)
-
     result["SeverityRank"] = result["HighestSeverity"].map(
-        severity_rank
+        SEVERITY_RANK
     )
 
     return (
