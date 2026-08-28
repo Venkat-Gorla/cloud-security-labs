@@ -9,8 +9,17 @@ from security_hub_prioritization import (
 )
 
 
+def print_test_header(name: str) -> None:
+    """Print a header for a manual validation test."""
+    print()
+    print(f"Test: {name}")
+    print("-" * 40)
+
+
 def test_add_severity_priority() -> None:
     """Validate highest severity and severity ranking."""
+    print_test_header("add_severity_priority")
+
     summary = pd.DataFrame(
         {
             "CRITICAL": [1, 0, 0],
