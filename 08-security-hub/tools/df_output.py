@@ -66,3 +66,19 @@ def print_resource_type_summary(
 
     for resource_type, count in resource_type_summary.head(limit).items():
         print(f"{resource_type:<24}: {count}")
+
+
+def print_high_priority_controls(
+    prioritized_controls: pd.DataFrame,
+) -> None:
+    """Print controls with Critical or High findings."""
+    print("High-Priority Controls")
+    print("-" * 50)
+    print(f"{'Control':<18} {'Total':>5}  Highest Severity")
+
+    for control_id, row in prioritized_controls.iterrows():
+        print(
+            f"{control_id:<18} "
+            f"{row['Total']:>5}  "
+            f"{row['HighestSeverity']}"
+        )
