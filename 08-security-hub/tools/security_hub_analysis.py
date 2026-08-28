@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 import pandas as pd
 from security_hub_prioritization import (
+    SEVERITY_ORDER,
     find_high_priority_controls,
     summarize_findings_by_resource,
     summarize_finding_concentration,
@@ -76,11 +77,8 @@ def summarize_findings_by_severity(
     findings_df: pd.DataFrame,
 ) -> pd.Series:
     """Count findings by severity."""
-    # vegorla: import from security_hub_prioritization
-    severity_order = ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"]
-
     summary = findings_df["Severity"].value_counts()
-    return summary.reindex(severity_order, fill_value=0)
+    return summary.reindex(SEVERITY_ORDER, fill_value=0)
 
 
 def summarize_findings_by_column(
