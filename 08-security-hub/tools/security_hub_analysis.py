@@ -18,6 +18,7 @@ from df_output import (
     print_control_summary,
     print_resource_type_summary,
     print_high_priority_controls,
+    print_resource_summary,
 )
 
 DATA_PATH = Path("data/security_hub_findings.json")
@@ -156,9 +157,7 @@ def main() -> None:
     print()
 
     resource_summary = summarize_findings_by_resource(findings_df)
-    print("Top Finding Resources")
-    print("-" * 50)
-    print(resource_summary.head(20).to_string())
+    print_resource_summary(resource_summary, limit=15)
     print()
 
     concentration = summarize_finding_concentration(

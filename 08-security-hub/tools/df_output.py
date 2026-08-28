@@ -82,3 +82,21 @@ def print_high_priority_controls(
             f"{row['Total']:>5}  "
             f"{row['HighestSeverity']}"
         )
+
+
+def print_resource_summary(
+    resource_summary: pd.DataFrame,
+    limit: int = 10,
+) -> None:
+    """Print the highest-priority resources."""
+    print("Top Finding Resources")
+    print("-" * 120)
+
+    output = (
+        resource_summary
+        .head(limit)
+        .reset_index()
+        [["Resource", "Findings", "Controls", "HighestSeverity"]]
+    )
+
+    print(output.to_string(index=False))
