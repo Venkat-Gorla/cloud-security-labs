@@ -34,20 +34,24 @@ def get_highest_severity(
     return "UNKNOWN"
 
 
+def add_severity_priority(summary: pd.DataFrame) -> pd.DataFrame:
+    """Add highest severity and ranking columns to the DataFrame in place."""
+    summary["HighestSeverity"] = summary.apply(
+        get_highest_severity,
+        axis=1,
+    )
+    summary["SeverityRank"] = summary["HighestSeverity"].map(
+        SEVERITY_RANK
+    )
+
+    return summary
+
+
 def prioritize_controls(
     summary: pd.DataFrame,
 ) -> pd.DataFrame:
     """Rank controls by highest severity and finding volume."""
-    result = summary.copy()
-
-    result["HighestSeverity"] = result.apply(
-        get_highest_severity,
-        axis=1,
-    )
-
-    result["SeverityRank"] = result["HighestSeverity"].map(
-        SEVERITY_RANK
-    )
+    result = add_severity_priority(summary.copy())
 
     return (
         result
