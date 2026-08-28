@@ -86,24 +86,6 @@ def find_high_priority_controls(
     ]
 
 
-# def summarize_findings_by_resource(
-#     findings_df: pd.DataFrame,
-# ) -> pd.DataFrame:
-#     """Summarize finding volume and control diversity by resource."""
-#     return (
-#         findings_df
-#         .groupby("Resource")
-#         .agg(
-#             Findings=("ControlId", "size"),
-#             Controls=("ControlId", "nunique"),
-#         )
-#         .sort_values(
-#             ["Findings", "Controls"],
-#             ascending=False,
-#         )
-#     )
-
-
 def summarize_findings_by_resource(
     findings_df: pd.DataFrame,
 ) -> pd.DataFrame:
