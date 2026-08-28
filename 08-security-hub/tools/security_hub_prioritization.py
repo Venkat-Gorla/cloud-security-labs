@@ -86,19 +86,54 @@ def find_high_priority_controls(
     ]
 
 
+# def summarize_findings_by_resource(
+#     findings_df: pd.DataFrame,
+# ) -> pd.DataFrame:
+#     """Summarize finding volume and control diversity by resource."""
+#     return (
+#         findings_df
+#         .groupby("Resource")
+#         .agg(
+#             Findings=("ControlId", "size"),
+#             Controls=("ControlId", "nunique"),
+#         )
+#         .sort_values(
+#             ["Findings", "Controls"],
+#             ascending=False,
+#         )
+#     )
+
+
 def summarize_findings_by_resource(
     findings_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Summarize finding volume and control diversity by resource."""
-    return (
+    """Summarize finding volume, control diversity, and severity by resource."""
+    resource_summary = (
         findings_df
         .groupby("Resource")
         .agg(
             Findings=("ControlId", "size"),
             Controls=("ControlId", "nunique"),
         )
+    )
+
+    resource_severity = (
+        findings_df
+        .groupby(["Resource", "Severity"])
+        .size()
+        .unstack(fill_value=0)
+        .reindex(columns=SEVERITY_ORDER, fill_value=0)
+    )
+
+    resource_summary = resource_summary.join(resource_severity)
+
+    resource_summary = add_severity_priority(resource_summary)
+
+    return (
+        resource_summary
         .sort_values(
-            ["Findings", "Controls"],
-            ascending=False,
+            ["SeverityRank", "Findings", "Controls"],
+            ascending=[True, False, False],
         )
+        .drop(columns="SeverityRank")
     )
