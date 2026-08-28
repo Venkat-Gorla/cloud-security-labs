@@ -91,47 +91,6 @@ def summarize_findings_by_column(
     return findings_df[column].value_counts()
 
 
-# vegorla: check if this function is needed, it seems to be unused
-def summarize_findings_by_resource_and_control(
-    findings_df: pd.DataFrame,
-) -> pd.DataFrame:
-    """Count findings by resource type and security control."""
-    summary = (
-        findings_df
-        .groupby(["ResourceType", "ControlId"])
-        .size()
-        .reset_index(name="Findings")
-        .sort_values(
-            ["ResourceType", "Findings"],
-            ascending=[True, False],
-        )
-    )
-
-    return summary
-
-
-def summarize_findings_by_control_and_severity(
-    findings_df: pd.DataFrame,
-) -> pd.DataFrame:
-    """Count findings by security control and severity."""
-    severity_order = [
-        "CRITICAL",
-        "HIGH",
-        "MEDIUM",
-        "LOW",
-        "INFORMATIONAL",
-    ]
-
-    summary = (
-        findings_df
-        .groupby(["ControlId", "Severity"])
-        .size()
-        .unstack(fill_value=0)
-    )
-
-    return summary.reindex(columns=severity_order, fill_value=0)
-
-
 def main() -> None:
     findings = load_findings(DATA_PATH)
     findings_df = create_findings_dataframe(findings)
