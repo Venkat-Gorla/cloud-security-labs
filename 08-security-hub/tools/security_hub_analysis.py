@@ -19,6 +19,7 @@ from df_output import (
     print_resource_type_summary,
     print_high_priority_controls,
     print_resource_summary,
+    print_finding_concentration,
 )
 
 DATA_PATH = Path("data/security_hub_findings.json")
@@ -164,7 +165,7 @@ def main() -> None:
         resource_summary,
         [1, 5, 10, 20],
     )
-    print(concentration)
+    print_finding_concentration(concentration, len(findings_df),)
 
 
 if __name__ == "__main__":

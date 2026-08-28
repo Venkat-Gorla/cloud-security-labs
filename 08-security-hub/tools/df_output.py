@@ -100,3 +100,22 @@ def print_resource_summary(
     )
 
     print(output.to_string(index=False))
+
+
+def print_finding_concentration(
+    concentration: pd.DataFrame,
+    total_findings: int,
+) -> None:
+    """Print the percentage of findings concentrated in top resources."""
+    print("Finding Concentration")
+    print("-" * 50)
+    print(f"{'Total Findings':<20}: {total_findings:,}")
+
+    for row in concentration.itertuples(index=False):
+        resource_label = "Resource" if row.Resources == 1 else "Resources"
+        label = f"Top {row.Resources} {resource_label}"
+
+        print(
+            f"{label:<20}: "
+            f"{row.Findings:,} ({row.Percentage:.1f}%)"
+        )
