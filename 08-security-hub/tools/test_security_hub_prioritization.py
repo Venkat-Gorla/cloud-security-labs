@@ -8,6 +8,7 @@ from security_hub_prioritization import (
     SEVERITY_RANK,
     add_severity_priority,
     prioritize_controls,
+    summarize_findings_by_resource,
 )
 
 
@@ -101,9 +102,75 @@ def test_prioritize_controls() -> None:
     print(result[["Total", "HighestSeverity"]])
 
 
+def test_summarize_findings_by_resource() -> None:
+    """Validate finding volume, control diversity, and severity by resource."""
+    print_test_header("summarize_findings_by_resource")
+
+    findings_df = pd.DataFrame(
+        {
+            "Resource": [
+                "bucket-a",
+                "bucket-a",
+                "bucket-a",
+                "role-a",
+            ],
+            "ControlId": [
+                "S3.2",
+                "S3.8",
+                "S3.2",
+                "IAM.6",
+            ],
+            "Severity": [
+                "CRITICAL",
+                "HIGH",
+                "INFORMATIONAL",
+                "MEDIUM",
+            ],
+        }
+    )
+
+    result = summarize_findings_by_resource(findings_df)
+
+    assert result.loc["bucket-a", "Findings"] == 3
+    assert result.loc["bucket-a", "Controls"] == 2
+    assert result.loc["bucket-a", "CRITICAL"] == 1
+    assert result.loc["bucket-a", "HIGH"] == 1
+    assert result.loc["bucket-a", "INFORMATIONAL"] == 1
+    assert result.loc["bucket-a", "HighestSeverity"] == "CRITICAL"
+
+    assert result.loc["role-a", "Findings"] == 1
+    assert result.loc["role-a", "Controls"] == 1
+    assert result.loc["role-a", "MEDIUM"] == 1
+    assert result.loc["role-a", "HighestSeverity"] == "MEDIUM"
+
+    assert result.index.tolist() == ["bucket-a", "role-a"]
+
+    print("✓ bucket-a → 3 findings")
+    print("✓ bucket-a → 2 distinct controls")
+    print("✓ bucket-a → CRITICAL is highest severity")
+    print("✓ role-a → 1 finding")
+    print("✓ role-a → 1 distinct control")
+    print("✓ role-a → MEDIUM is highest severity")
+    print()
+    print(
+        result[
+            [
+                "Findings",
+                "Controls",
+                "CRITICAL",
+                "HIGH",
+                "MEDIUM",
+                "INFORMATIONAL",
+                "HighestSeverity",
+            ]
+        ]
+    )
+
+
 def main() -> None:
     test_add_severity_priority()
     test_prioritize_controls()
+    test_summarize_findings_by_resource()
     print()
     print("All prioritization tests passed.")
 
