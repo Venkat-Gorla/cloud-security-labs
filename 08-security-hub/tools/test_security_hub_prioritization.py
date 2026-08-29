@@ -9,6 +9,7 @@ from security_hub_prioritization import (
     add_severity_priority,
     prioritize_controls,
     summarize_findings_by_resource,
+    summarize_finding_concentration,
 )
 
 
@@ -167,10 +168,49 @@ def test_summarize_findings_by_resource() -> None:
     )
 
 
+def test_summarize_finding_concentration() -> None:
+    """Validate cumulative finding concentration by top resources."""
+    print_test_header("summarize_finding_concentration")
+
+    resource_summary = pd.DataFrame(
+        {
+            "Findings": [10, 5, 3, 2],
+            "Controls": [8, 5, 3, 2],
+        },
+        index=[
+            "resource-a",
+            "resource-b",
+            "resource-c",
+            "resource-d",
+        ],
+    )
+
+    result = summarize_finding_concentration(
+        resource_summary,
+        [1, 2, 3],
+    )
+
+    assert result["Resources"].tolist() == [1, 2, 3]
+    assert result["Findings"].tolist() == [10, 15, 18]
+
+    assert result["Percentage"].tolist() == [
+        50.0,
+        75.0,
+        90.0,
+    ]
+
+    print("✓ Top 1 resource → 10 findings → 50.0%")
+    print("✓ Top 2 resources → 15 findings → 75.0%")
+    print("✓ Top 3 resources → 18 findings → 90.0%")
+    print()
+    print(result)
+
+
 def main() -> None:
     test_add_severity_priority()
     test_prioritize_controls()
     test_summarize_findings_by_resource()
+    test_summarize_finding_concentration()
     print()
     print("All prioritization tests passed.")
 
