@@ -1,7 +1,5 @@
 """
 Security Hub finding prioritization.
-
-vegorla: consider unit tests for these functions
 """
 
 import pandas as pd
