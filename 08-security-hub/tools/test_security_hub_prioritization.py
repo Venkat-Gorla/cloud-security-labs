@@ -212,7 +212,9 @@ def main() -> None:
     test_summarize_findings_by_resource()
     test_summarize_finding_concentration()
     print()
-    print("All prioritization tests passed.")
+    print("=" * 40)
+    print("✓✓ All prioritization tests passed.")
+    print("=" * 40)
 
 
 if __name__ == "__main__":
