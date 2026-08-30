@@ -20,12 +20,9 @@ SEVERITY_RANK = {
 SEVERITY_RANK["UNKNOWN"] = len(SEVERITY_ORDER)
 
 
-def get_highest_severity(
-    row: pd.Series,
-    severity_order: list[str] = SEVERITY_ORDER,
-) -> str:
+def get_highest_severity(row: pd.Series) -> str:
     """Return the highest severity present in a finding summary row."""
-    for severity in severity_order:
+    for severity in SEVERITY_ORDER:
         if row[severity] > 0:
             return severity
 
