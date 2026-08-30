@@ -1,0 +1,56 @@
+> uv run tools/test_security_hub_prioritization.py
+
+Test: add_severity_priority
+----------------------------------------
+✓ S3.2 → CRITICAL
+✓ S3.8 → HIGH
+✓ S3.9 → MEDIUM
+✓ Severity ranks match SEVERITY_RANK
+
+      CRITICAL  HIGH  MEDIUM  LOW  INFORMATIONAL HighestSeverity  SeverityRank
+S3.2         1     0       0    0             15        CRITICAL             0
+S3.8         0     1       0    0             15            HIGH             1
+S3.9         0     0       2    1              5          MEDIUM             2
+
+Test: prioritize_controls
+----------------------------------------
+✓ CRITICAL controls appear first
+✓ HIGH controls appear before MEDIUM controls
+✓ Finding volume breaks severity ties
+✓ Original DataFrame remains unchanged
+✓ SeverityRank is removed from the returned result
+
+       Total HighestSeverity
+IAM.6      6        CRITICAL
+S3.2       1        CRITICAL
+S3.8      16            HIGH
+S3.9       7          MEDIUM
+
+Test: summarize_findings_by_resource
+----------------------------------------
+✓ bucket-a → 3 findings
+✓ bucket-a → 2 distinct controls
+✓ bucket-a → CRITICAL is highest severity
+✓ role-a → 1 finding
+✓ role-a → 1 distinct control
+✓ role-a → MEDIUM is highest severity
+
+          Findings  Controls  CRITICAL  HIGH  MEDIUM  INFORMATIONAL HighestSeverity
+Resource
+bucket-a         3         2         1     1       0              1        CRITICAL
+role-a           1         1         0     0       1              0          MEDIUM
+
+Test: summarize_finding_concentration
+----------------------------------------
+✓ Top 1 resource → 10 findings → 50.0%
+✓ Top 2 resources → 15 findings → 75.0%
+✓ Top 3 resources → 18 findings → 90.0%
+
+   Resources  Findings  Percentage
+0          1        10        50.0
+1          2        15        75.0
+2          3        18        90.0
+
+========================================
+✓✓ All prioritization tests passed.
+========================================
